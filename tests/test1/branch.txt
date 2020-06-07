@@ -1,0 +1,8 @@
+./Makefile
+./additions.txt
+./base.txt
+./base1.txt
+./branch.txt
+./deletions.txt
+./sorted-diff
+./sorted_diff.c

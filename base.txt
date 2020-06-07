@@ -1,0 +1,9 @@
+.
+./.sorted_diff.c.swp
+./Makefile
+./additions.txt
+./base.txt
+./branch.txt
+./deletions.txt
+./sorted-diff
+./sorted_diff.c
