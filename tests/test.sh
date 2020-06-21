@@ -1,6 +1,6 @@
 #!/bin/bash
 
-../sorted-diff ./test1/base.txt ./test1/branch.txt ./additions_tmp.txt ./deletions_tmp.txt > /dev/null
+../sorted-diff normal ./test1/base.txt ./test1/branch.txt ./additions_tmp.txt ./deletions_tmp.txt > /dev/null
 cmp ./test1/additions.txt ./additions_tmp.txt
 ADDITIONS_CMP=$?
 cmp ./test1/deletions.txt ./deletions_tmp.txt

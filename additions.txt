@@ -1,1 +1,3 @@
-./base1.txt
+/home/robert/tmp/test1/test2/test.txt	1591465907
+/home/robert/tmp/test1/test2/test3	1591465835
+/home/robert/tmp/test1/test3	1591465969
