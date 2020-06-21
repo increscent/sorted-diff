@@ -14,3 +14,12 @@ if [ $DELETIONS_CMP -ne 0 ]
 then
     exit 1
 fi
+
+../sorted-merge ./test2/base.txt ./test2/branch.txt > ./output_tmp.txt
+cmp ./test2/output.txt ./output_tmp.txt
+OUTPUT_CMP=$?
+rm ./output_tmp.txt
+if [ $OUTPUT_CMP -ne 0 ]
+then
+    exit 1
+fi

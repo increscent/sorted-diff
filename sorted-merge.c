@@ -2,27 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MODE_NORMAL 1
-#define MODE_MODIFIED 2
-
 void close_file(FILE*, const char*);
 size_t max(size_t, size_t);
 
 int main(int argc, char **argv)
 {
-    if (argc < 6)
+    if (argc < 3)
     {
-        printf("Usage: sorted-diff [normal|modified] [base] [branch] [additions] [deletions]\n");
+        printf("Usage: sorted-merge [base] [branch]\n");
         return 1;
     }
 
-    int mode = strcmp(argv[1], "modified") == 0 ? MODE_MODIFIED : MODE_NORMAL;
-
-    FILE *base_file = fopen(argv[2], "r");
-    FILE *brch_file = fopen(argv[3], "r");
-
-    FILE *additions_file = fopen(argv[4], "w");
-    FILE *deletions_file = fopen(argv[5], "w");
+    FILE *base_file = fopen(argv[1], "r");
+    FILE *brch_file = fopen(argv[2], "r");
 
     char *base_buffer = malloc(1024);
     char *brch_buffer = malloc(1024);
@@ -34,8 +26,6 @@ int main(int argc, char **argv)
     ssize_t brch_read_result = getline(&brch_buffer, &brch_n, brch_file);
 
     int compare = 0;
-    int additions = 0;
-    int deletions = 0;
 
     char *tab_base;
     char *tab_brch;
@@ -59,29 +49,29 @@ int main(int argc, char **argv)
 
         compare = strncmp(base_buffer, brch_buffer, max(len_base, len_brch));
 
-        if (mode == MODE_MODIFIED && compare == 0 && time_brch >= time_base)
-        {
-            // This counts as an addition (it's a modification)
-            compare = 1;
-        }
-
         if (compare < 0)
         {
             // branch skipped base; base line was deleted
-            fwrite(base_buffer, strlen(base_buffer), 1, deletions_file);
+            fwrite(base_buffer, strlen(base_buffer), 1, stdout);
             base_read_result = getline(&base_buffer, &base_n, base_file);
-            deletions++;
         }
         else if (compare > 0)
         {
             // base does not contain branch line; branch line was added
-            fwrite(brch_buffer, strlen(brch_buffer), 1, additions_file);
+            fwrite(brch_buffer, strlen(brch_buffer), 1, stdout);
             brch_read_result = getline(&brch_buffer, &brch_n, brch_file);
-            additions++;
         }
         else
         {
             // no additions or deletions; lines match
+            if (time_base >= time_brch)
+            {
+                fwrite(base_buffer, strlen(base_buffer), 1, stdout);
+            }
+            else
+            {
+                fwrite(brch_buffer, strlen(brch_buffer), 1, stdout);
+            }
             base_read_result = getline(&base_buffer, &base_n, base_file);
             brch_read_result = getline(&brch_buffer, &brch_n, brch_file);
         }
@@ -90,27 +80,19 @@ int main(int argc, char **argv)
     while (base_read_result >= 0)
     {
         // all lines left over in base have been deleted
-        fwrite(base_buffer, strlen(base_buffer), 1, deletions_file);
-        deletions++;
+        fwrite(base_buffer, strlen(base_buffer), 1, stdout);
         base_read_result = getline(&base_buffer, &base_n, base_file);
     }
 
     while (brch_read_result >= 0)
     {
         // all lines left over in branch have been added
-        fwrite(brch_buffer, strlen(brch_buffer), 1, additions_file);
-        additions++;
+        fwrite(brch_buffer, strlen(brch_buffer), 1, stdout);
         brch_read_result = getline(&brch_buffer, &brch_n, brch_file);
     }
 
-    printf("%d addition(s)\n", additions);
-    printf("%d deletion(s)\n", deletions);
-
     close_file(base_file, argv[1]);
     close_file(brch_file, argv[2]);
-
-    close_file(additions_file, argv[3]);
-    close_file(deletions_file, argv[4]);
 
     return 0;
 }

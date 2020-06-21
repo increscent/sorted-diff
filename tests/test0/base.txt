@@ -1,7 +1,6 @@
 /home/robert/tmp	2591673532
 /home/robert/tmp/test.css	2591673518
 /home/robert/tmp/test.html	2591673239
-/home/robert/tmp/test1	21591465969
 /home/robert/tmp/test1/test2	2592455091
 /home/robert/tmp/test1/test2/test 1.txt	2592454866
 /home/robert/tmp/test1/test2/test.txt	1591465907
